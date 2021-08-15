@@ -62,16 +62,35 @@ m = size(X, 1);
 
 
 
-X = [ones(1, m) X];
+a1 = [ones(m, 1) X];
+z2 = a1 * Theta1';
+a2 = sigmoid(z2);
+a2 = [ones(m, 1) a2];
+z3 = a2 * Theta2';
+a3 = sigmoid(z3);
 
-a2 = 
+% cost part
+one_hot = y == 1:num_labels;
+J = 1/m * sum(- log(a3) .* one_hot - log(1 - a3) .* (1 - one_hot), "all");
+reg_term = lambda / (2*m) * ...
+    (sum(Theta1(:, 2:end).^2, "all") + ...
+    sum(Theta2(:, 2:end).^2, "all"));
+J = J + reg_term;
 
 
+% backpropagation
 
+Theta2 = Theta2(:, 2:end);
+Theta1 = Theta1(:, 2:end);
 
+delta3 = a3 - one_hot;
+delta2 = delta3 * Theta2 .* sigmoidGradient(z2);
 
+Theta2_grad = 1/m * delta3' * a2;
+Theta1_grad = 1/m * delta2' * a1;
 
-
+Theta2_grad(:, 2:end) = Theta2_grad(:, 2:end) + Theta2 * lambda / m;
+Theta1_grad(:, 2:end) = Theta1_grad(:, 2:end) + Theta1 * lambda / m;
 
 
 
