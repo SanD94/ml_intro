@@ -48,9 +48,8 @@ x = zeros(n, 1);
 %
 %
 
-
-
-
+x = zeros(1,n);
+x(word_indices) = 1;
 
 
 
